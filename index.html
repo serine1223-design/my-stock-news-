@@ -8,15 +8,15 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
   .app { max-width: 720px; margin: 0 auto; padding: 1rem; }
-
+ 
   /* header */
   .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding: 1rem 1.25rem; background: #fff; border-radius: 14px; border: 1px solid #e8e8e8; }
   .header h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; }
   .date-str { font-size: 13px; color: #888; }
-
+ 
   /* section label */
   .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; color: #888; text-transform: uppercase; margin-bottom: 10px; }
-
+ 
   /* watchlist */
   .watchlist { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 1.5rem; }
   .watchlist::-webkit-scrollbar { height: 3px; }
@@ -28,13 +28,13 @@
   .stock-flag { font-size: 11px; color: #888; }
   .add-card { flex: 0 0 auto; background: none; border: 1.5px dashed #ccc; border-radius: 14px; padding: 12px 16px; min-width: 90px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #888; font-size: 14px; font-family: inherit; transition: background .15s; }
   .add-card:hover { background: #f5f5f5; }
-
+ 
   /* tabs */
   .tab-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
   .tab { padding: 6px 16px; border-radius: 999px; font-size: 13px; border: 1px solid #e0e0e0; background: none; cursor: pointer; color: #666; font-family: inherit; transition: all .15s; }
   .tab:hover { background: #f5f5f5; }
   .tab.on { background: #e8f0fe; color: #1a56db; border-color: transparent; }
-
+ 
   /* news */
   .news-list { display: flex; flex-direction: column; gap: 10px; }
   .news-item { background: #fff; border: 1px solid #e8e8e8; border-radius: 14px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; text-decoration: none; transition: border-color .15s; }
@@ -44,7 +44,7 @@
   .badge-us { background: #e6f1fb; color: #185fa5; }
   .news-title { font-size: 14px; font-weight: 500; color: #1a1a1a; line-height: 1.5; margin-bottom: 4px; }
   .news-meta { font-size: 12px; color: #888; }
-
+ 
   /* earnings */
   .earn-section { display: flex; flex-direction: column; gap: 10px; }
   .earn-month { font-size: 13px; font-weight: 600; color: #555; margin: 8px 0 4px; }
@@ -65,29 +65,39 @@
   .tag-miss { background: #fde8e8; color: #a32d2d; }
   .earn-eps { font-size: 12px; color: #888; }
   .d-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #f0f0f0; color: #666; margin-left: 6px; }
-
+ 
   /* loading / empty */
   .loading { text-align: center; padding: 2.5rem; color: #888; font-size: 14px; }
   .empty { text-align: center; padding: 2.5rem; color: #888; font-size: 14px; }
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #e0e0e0; border-top-color: #1a56db; border-radius: 50%; animation: spin .7s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
   /* live dot */
   .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #1d9e75; margin-right: 5px; vertical-align: middle; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
+ 
   /* modal */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99; align-items: center; justify-content: center; }
   .modal-bg.open { display: flex; }
   .modal { background: #fff; border-radius: 16px; padding: 1.25rem; width: 90%; max-width: 300px; box-shadow: 0 8px 32px rgba(0,0,0,.12); }
   .modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
   .modal p { font-size: 13px; color: #888; margin-bottom: 12px; }
-  .stock-options { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
-  .stock-option { padding: 10px 14px; border: 1px solid #e8e8e8; border-radius: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: none; font-family: inherit; color: #1a1a1a; text-align: left; transition: background .15s; }
-  .stock-option:hover { background: #f5f5f5; }
-  .close-btn { width: 100%; margin-top: 10px; padding: 9px; border: 1px solid #e0e0e0; border-radius: 10px; background: none; font-size: 13px; cursor: pointer; color: #666; font-family: inherit; }
+  .ticker-input { width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 15px; font-family: inherit; color: #1a1a1a; background: #fafafa; outline: none; transition: border-color .15s; letter-spacing: .05em; text-transform: uppercase; }
+  .ticker-input:focus { border-color: #1a56db; background: #fff; }
+  .ticker-input::placeholder { text-transform: none; letter-spacing: 0; color: #bbb; }
+  .modal-hint { font-size: 12px; color: #aaa; margin-top: 6px; line-height: 1.5; }
+  .modal-market-row { display: flex; gap: 8px; margin: 10px 0; }
+  .mkt-btn { flex: 1; padding: 7px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 13px; cursor: pointer; background: none; font-family: inherit; color: #666; transition: all .15s; }
+  .mkt-btn.on { background: #e8f0fe; color: #1a56db; border-color: #1a56db; }
+  .modal-add-btn { width: 100%; padding: 11px; border-radius: 10px; background: #1a56db; color: #fff; border: none; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 4px; transition: opacity .15s; }
+  .modal-add-btn:hover { opacity: .88; }
+  .modal-err { font-size: 12px; color: #c0392b; min-height: 18px; margin-top: 4px; }
+  .close-btn { width: 100%; margin-top: 8px; padding: 9px; border: 1px solid #e0e0e0; border-radius: 10px; background: none; font-size: 13px; cursor: pointer; color: #666; font-family: inherit; }
   .close-btn:hover { background: #f5f5f5; }
-
+  .del-btn { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; background: #eee; border: none; cursor: pointer; font-size: 11px; color: #888; display: none; align-items: center; justify-content: center; line-height: 1; }
+  .stock-card { position: relative; }
+  .stock-card:hover .del-btn { display: flex; }
+ 
   @media (max-width: 480px) {
     .app { padding: .75rem; }
     .header h1 { font-size: 16px; }
@@ -101,45 +111,52 @@
     <h1>📰 나의 주식 뉴스</h1>
     <span class="date-str" id="dateStr"></span>
   </div>
-
+ 
   <div class="section-label">관심 종목</div>
   <div class="watchlist" id="watchlist"></div>
-
+ 
   <div class="tab-row">
     <button class="tab on" id="tab-news" onclick="switchTab('news')">📰 전체 뉴스</button>
     <button class="tab" id="tab-kr" onclick="switchTab('kr')">🇰🇷 한국</button>
     <button class="tab" id="tab-us" onclick="switchTab('us')">🇺🇸 미국</button>
     <button class="tab" id="tab-earnings" onclick="switchTab('earnings')">📊 실적 발표</button>
   </div>
-
+ 
   <div id="newsPane">
     <div class="section-label"><span class="live-dot"></span>최신 뉴스</div>
     <div class="news-list" id="newsList">
       <div class="loading"><span class="spinner"></span>뉴스 불러오는 중...</div>
     </div>
   </div>
-
+ 
   <div id="earningsPane" style="display:none;">
     <div class="section-label">📊 실적 발표 일정</div>
     <div class="earn-section" id="earningsList"></div>
   </div>
 </div>
-
+ 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3>종목 추가</h3>
-    <p>추가할 종목을 선택하세요</p>
-    <div class="stock-options" id="stockOptions"></div>
-    <button class="close-btn" onclick="closeModal()">닫기</button>
+    <p>어떤 시장 종목인가요?</p>
+    <div class="modal-market-row">
+      <button class="mkt-btn on" id="mkt-kr" onclick="selectMarket('kr')">🇰🇷 한국</button>
+      <button class="mkt-btn" id="mkt-us" onclick="selectMarket('us')">🇺🇸 미국</button>
+    </div>
+    <input class="ticker-input" id="tickerInput" placeholder="티커 입력 (예: 005930 / AAPL)" maxlength="10" />
+    <div class="modal-hint" id="modalHint">한국: 종목코드 6자리 (예: 005930)<br>미국: 영문 티커 (예: AAPL, TSLA, NVDA)</div>
+    <div class="modal-err" id="modalErr"></div>
+    <button class="modal-add-btn" onclick="addStockByTicker()">추가하기</button>
+    <button class="close-btn" onclick="closeModal()">취소</button>
   </div>
 </div>
-
+ 
 <script>
 const today = new Date();
 const days = ['일','월','화','수','목','금','토'];
 document.getElementById('dateStr').textContent =
   `${today.getMonth()+1}월 ${today.getDate()}일 (${days[today.getDay()]})`;
-
+ 
 const ALL_STOCKS = [
   {ticker:'005930', name:'삼성전자', market:'kr', query:'삼성전자 주식'},
   {ticker:'035720', name:'카카오',   market:'kr', query:'카카오 주식'},
@@ -155,7 +172,7 @@ const ALL_STOCKS = [
   {ticker:'META',   name:'Meta',     market:'us', query:'Meta META stock'},
   {ticker:'GOOGL',  name:'Alphabet', market:'us', query:'Alphabet GOOGL stock'},
 ];
-
+ 
 const EARNINGS_DATA = [
   {name:'Tesla',      ticker:'TSLA',   market:'us', date:'2025-04-23', status:'past', expected:'$0.43', actual:'$0.27', beat:false, note:'예상 하회 — 마진 압박'},
   {name:'Microsoft',  ticker:'MSFT',   market:'us', date:'2025-04-30', status:'past', expected:'$3.22', actual:'$3.46', beat:true,  note:'클라우드 호조'},
@@ -167,19 +184,19 @@ const EARNINGS_DATA = [
   {name:'NVIDIA',     ticker:'NVDA',   market:'us', date:'2025-05-28', status:'soon', expected:'$0.89',  actual:null, beat:null, note:'블랙웰 출하량 주목'},
   {name:'SK하이닉스', ticker:'000660', market:'kr', date:'2025-07-25', status:'soon', expected:'미정',   actual:null, beat:null, note:'HBM3E 매출'},
 ];
-
+ 
 // ── 처음 보여줄 종목 (원하는 대로 수정하세요)
 let myStocks = [ALL_STOCKS[0], ALL_STOCKS[1], ALL_STOCKS[6], ALL_STOCKS[7]];
 let activeTab = 'news';
 let allNews = [];
-
+ 
 const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
+ 
 function googleRSS(q, lang='ko', gl='KR', ceid='KR:ko') {
   const feed = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=${lang}&gl=${gl}&ceid=${ceid}`;
   return PROXY + encodeURIComponent(feed);
 }
-
+ 
 function timeAgo(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d)) return '';
@@ -189,7 +206,7 @@ function timeAgo(dateStr) {
   if (diff < 1440) return `${Math.floor(diff / 60)}시간 전`;
   return `${Math.floor(diff / 1440)}일 전`;
 }
-
+ 
 async function fetchNewsForStock(s) {
   try {
     const url = s.market === 'kr'
@@ -208,7 +225,7 @@ async function fetchNewsForStock(s) {
     }));
   } catch (e) { return []; }
 }
-
+ 
 async function loadAllNews() {
   document.getElementById('newsList').innerHTML =
     '<div class="loading"><span class="spinner"></span>뉴스 불러오는 중...</div>';
@@ -216,7 +233,7 @@ async function loadAllNews() {
   allNews = results.flat().sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
   renderNews(activeTab === 'earnings' ? 'all' : activeTab);
 }
-
+ 
 function renderNews(filter) {
   const list = document.getElementById('newsList');
   let data = allNews;
@@ -232,13 +249,13 @@ function renderNews(filter) {
       </div>
     </a>`).join('');
 }
-
+ 
 function renderEarnings() {
   const el = document.getElementById('earningsList');
   const myTickers = myStocks.map(s => s.ticker);
   const relevant  = EARNINGS_DATA.filter(e => myTickers.includes(e.ticker));
   const now = new Date();
-
+ 
   function fmtDate(ds) {
     const d = new Date(ds);
     const diff = Math.round((d - now) / 86400000);
@@ -253,11 +270,11 @@ function renderEarnings() {
     if (diff === 0) return '오늘!';
     return `D-${diff}`;
   }
-
+ 
   const upcoming = relevant.filter(e => e.status === 'soon');
   const past     = relevant.filter(e => e.status === 'past');
   let html = '';
-
+ 
   if (upcoming.length) {
     html += `<div class="earn-month">📅 예정된 실적 발표</div>`;
     html += upcoming.map(e => {
@@ -276,7 +293,7 @@ function renderEarnings() {
       </div>`;
     }).join('');
   }
-
+ 
   if (past.length) {
     html += `<div class="earn-month" style="margin-top:14px;">✅ 최근 실적 결과</div>`;
     html += past.map(e => `
@@ -292,11 +309,11 @@ function renderEarnings() {
         </div>
       </div>`).join('');
   }
-
+ 
   if (!html) html = '<div class="empty">관심 종목의 실적 발표 일정이 없어요</div>';
   el.innerHTML = html;
 }
-
+ 
 function switchTab(tab) {
   activeTab = tab;
   ['news','kr','us','earnings'].forEach(t => {
@@ -309,7 +326,7 @@ function switchTab(tab) {
   if (isNews) renderNews(tab === 'news' ? 'all' : tab);
   else renderEarnings();
 }
-
+ 
 function renderWatchlist() {
   const el = document.getElementById('watchlist');
   el.innerHTML = '';
@@ -317,6 +334,7 @@ function renderWatchlist() {
     const d = document.createElement('div');
     d.className = 'stock-card';
     d.innerHTML = `
+      <button class="del-btn" onclick="event.stopPropagation();removeStock('${s.ticker}')">✕</button>
       <div class="stock-ticker">${s.ticker}</div>
       <div class="stock-name">${s.name}</div>
       <div class="stock-flag">${s.market === 'kr' ? '🇰🇷 한국' : '🇺🇸 미국'}</div>`;
@@ -328,25 +346,88 @@ function renderWatchlist() {
   btn.onclick = openModal;
   el.appendChild(btn);
 }
-
+ 
+// 종목 이름 매핑 (티커 → 이름)
+const TICKER_NAMES = {
+  '005930':'삼성전자','035720':'카카오','000660':'SK하이닉스','035420':'NAVER',
+  '005380':'현대차','068270':'셀트리온','000270':'기아','051910':'LG화학',
+  '207940':'삼성바이오로직스','373220':'LG에너지솔루션','028260':'삼성물산',
+  'AAPL':'Apple','TSLA':'Tesla','NVDA':'NVIDIA','MSFT':'Microsoft',
+  'AMZN':'Amazon','META':'Meta','GOOGL':'Alphabet','GOOG':'Alphabet',
+  'NFLX':'Netflix','AMD':'AMD','INTC':'Intel','BABA':'Alibaba',
+  'UBER':'Uber','COIN':'Coinbase','PLTR':'Palantir','SHOP':'Shopify',
+  'SPOT':'Spotify','SNAP':'Snap','X':'X (Twitter)','DIS':'Disney',
+  'JPM':'JPMorgan','BAC':'Bank of America','V':'Visa','MA':'Mastercard',
+  'WMT':'Walmart','NKE':'Nike','SBUX':'Starbucks','MCD':'McDonald\'s',
+};
+ 
+let selectedMarket = 'kr';
+ 
+function selectMarket(mkt) {
+  selectedMarket = mkt;
+  document.getElementById('mkt-kr').classList.toggle('on', mkt === 'kr');
+  document.getElementById('mkt-us').classList.toggle('on', mkt === 'us');
+  const hint = document.getElementById('modalHint');
+  const input = document.getElementById('tickerInput');
+  if (mkt === 'kr') {
+    hint.innerHTML = '한국: 종목코드 6자리 (예: 005930)<br>모르면 네이버 증권에서 검색하세요';
+    input.placeholder = '예: 005930';
+    input.style.textTransform = 'none';
+  } else {
+    hint.innerHTML = '미국: 영문 티커 (예: AAPL, TSLA, NVDA)<br>모르면 Yahoo Finance에서 검색하세요';
+    input.placeholder = '예: AAPL';
+    input.style.textTransform = 'uppercase';
+  }
+  input.value = '';
+  document.getElementById('modalErr').textContent = '';
+  input.focus();
+}
+ 
 function openModal() {
-  const avail = ALL_STOCKS.filter(s => !myStocks.find(m => m.ticker === s.ticker));
-  document.getElementById('stockOptions').innerHTML = avail.map(s => `
-    <button class="stock-option" onclick="addStock('${s.ticker}')">
-      <span>${s.name} <span style="font-size:12px;color:#888;">${s.ticker}</span></span>
-      <span>${s.market === 'kr' ? '🇰🇷' : '🇺🇸'}</span>
-    </button>`).join('');
+  selectedMarket = 'kr';
+  document.getElementById('mkt-kr').classList.add('on');
+  document.getElementById('mkt-us').classList.remove('on');
+  document.getElementById('tickerInput').value = '';
+  document.getElementById('modalErr').textContent = '';
   document.getElementById('modalBg').classList.add('open');
+  setTimeout(() => document.getElementById('tickerInput').focus(), 50);
 }
+ 
 function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
-function addStock(ticker) {
-  const s = ALL_STOCKS.find(x => x.ticker === ticker);
-  if (s) { myStocks.push(s); closeModal(); renderWatchlist(); loadAllNews(); }
+ 
+function addStockByTicker() {
+  const raw = document.getElementById('tickerInput').value.trim();
+  const ticker = selectedMarket === 'us' ? raw.toUpperCase() : raw;
+  const err = document.getElementById('modalErr');
+ 
+  if (!ticker) { err.textContent = '티커를 입력해주세요.'; return; }
+  if (myStocks.find(s => s.ticker === ticker)) { err.textContent = '이미 추가된 종목이에요.'; return; }
+ 
+  const name = TICKER_NAMES[ticker] || ticker;
+  const query = selectedMarket === 'kr'
+    ? `${name} 주식`
+    : `${name} ${ticker} stock`;
+ 
+  const newStock = { ticker, name, market: selectedMarket, query };
+  myStocks.push(newStock);
+  closeModal();
+  renderWatchlist();
+  loadAllNews();
 }
+ 
+function removeStock(ticker) {
+  myStocks = myStocks.filter(s => s.ticker !== ticker);
+  renderWatchlist();
+  loadAllNews();
+}
+ 
 document.getElementById('modalBg').onclick = e => {
   if (e.target === e.currentTarget) closeModal();
 };
-
+document.getElementById('tickerInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addStockByTicker();
+});
+ 
 renderWatchlist();
 loadAllNews();
 </script>
