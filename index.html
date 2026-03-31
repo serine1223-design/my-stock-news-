@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 주식 뉴스</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+  .app { max-width: 720px; margin: 0 auto; padding: 1rem; }
+
+  /* header */
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding: 1rem 1.25rem; background: #fff; border-radius: 14px; border: 1px solid #e8e8e8; }
+  .header h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; }
+  .date-str { font-size: 13px; color: #888; }
+
+  /* section label */
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; color: #888; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* watchlist */
+  .watchlist { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 1.5rem; }
+  .watchlist::-webkit-scrollbar { height: 3px; }
+  .watchlist::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+  .stock-card { flex: 0 0 auto; background: #fff; border: 1px solid #e8e8e8; border-radius: 14px; padding: 12px 16px; min-width: 130px; cursor: pointer; transition: border-color .15s; }
+  .stock-card:hover { border-color: #bbb; }
+  .stock-ticker { font-size: 11px; color: #888; }
+  .stock-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin: 2px 0 4px; }
+  .stock-flag { font-size: 11px; color: #888; }
+  .add-card { flex: 0 0 auto; background: none; border: 1.5px dashed #ccc; border-radius: 14px; padding: 12px 16px; min-width: 90px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #888; font-size: 14px; font-family: inherit; transition: background .15s; }
+  .add-card:hover { background: #f5f5f5; }
+
+  /* tabs */
+  .tab-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab { padding: 6px 16px; border-radius: 999px; font-size: 13px; border: 1px solid #e0e0e0; background: none; cursor: pointer; color: #666; font-family: inherit; transition: all .15s; }
+  .tab:hover { background: #f5f5f5; }
+  .tab.on { background: #e8f0fe; color: #1a56db; border-color: transparent; }
+
+  /* news */
+  .news-list { display: flex; flex-direction: column; gap: 10px; }
+  .news-item { background: #fff; border: 1px solid #e8e8e8; border-radius: 14px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; text-decoration: none; transition: border-color .15s; }
+  .news-item:hover { border-color: #bbb; }
+  .news-badge { flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; margin-top: 2px; white-space: nowrap; }
+  .badge-kr { background: #e1f5ee; color: #0f6e56; }
+  .badge-us { background: #e6f1fb; color: #185fa5; }
+  .news-title { font-size: 14px; font-weight: 500; color: #1a1a1a; line-height: 1.5; margin-bottom: 4px; }
+  .news-meta { font-size: 12px; color: #888; }
+
+  /* earnings */
+  .earn-section { display: flex; flex-direction: column; gap: 10px; }
+  .earn-month { font-size: 13px; font-weight: 600; color: #555; margin: 8px 0 4px; }
+  .earn-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+  .earn-card.past { opacity: .65; }
+  .earn-logo { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex: 0 0 auto; }
+  .logo-kr { background: #e1f5ee; color: #0f6e56; }
+  .logo-us { background: #e6f1fb; color: #185fa5; }
+  .earn-info { flex: 1; min-width: 0; }
+  .earn-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .earn-date { font-size: 12px; color: #888; margin-top: 2px; }
+  .earn-right { text-align: right; flex: 0 0 auto; }
+  .earn-tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; display: inline-block; margin-bottom: 4px; }
+  .tag-today { background: #e6f1fb; color: #185fa5; }
+  .tag-soon { background: #faeeda; color: #854f0b; }
+  .tag-past { background: #f0f0f0; color: #888; }
+  .tag-beat { background: #eaf3de; color: #3b6d11; }
+  .tag-miss { background: #fde8e8; color: #a32d2d; }
+  .earn-eps { font-size: 12px; color: #888; }
+  .d-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #f0f0f0; color: #666; margin-left: 6px; }
+
+  /* loading / empty */
+  .loading { text-align: center; padding: 2.5rem; color: #888; font-size: 14px; }
+  .empty { text-align: center; padding: 2.5rem; color: #888; font-size: 14px; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #e0e0e0; border-top-color: #1a56db; border-radius: 50%; animation: spin .7s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* live dot */
+  .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #1d9e75; margin-right: 5px; vertical-align: middle; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* modal */
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99; align-items: center; justify-content: center; }
+  .modal-bg.open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; padding: 1.25rem; width: 90%; max-width: 300px; box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+  .modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: #888; margin-bottom: 12px; }
+  .stock-options { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
+  .stock-option { padding: 10px 14px; border: 1px solid #e8e8e8; border-radius: 10px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: none; font-family: inherit; color: #1a1a1a; text-align: left; transition: background .15s; }
+  .stock-option:hover { background: #f5f5f5; }
+  .close-btn { width: 100%; margin-top: 10px; padding: 9px; border: 1px solid #e0e0e0; border-radius: 10px; background: none; font-size: 13px; cursor: pointer; color: #666; font-family: inherit; }
+  .close-btn:hover { background: #f5f5f5; }
+
+  @media (max-width: 480px) {
+    .app { padding: .75rem; }
+    .header h1 { font-size: 16px; }
+    .news-title { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>📰 나의 주식 뉴스</h1>
+    <span class="date-str" id="dateStr"></span>
+  </div>
+
+  <div class="section-label">관심 종목</div>
+  <div class="watchlist" id="watchlist"></div>
+
+  <div class="tab-row">
+    <button class="tab on" id="tab-news" onclick="switchTab('news')">📰 전체 뉴스</button>
+    <button class="tab" id="tab-kr" onclick="switchTab('kr')">🇰🇷 한국</button>
+    <button class="tab" id="tab-us" onclick="switchTab('us')">🇺🇸 미국</button>
+    <button class="tab" id="tab-earnings" onclick="switchTab('earnings')">📊 실적 발표</button>
+  </div>
+
+  <div id="newsPane">
+    <div class="section-label"><span class="live-dot"></span>최신 뉴스</div>
+    <div class="news-list" id="newsList">
+      <div class="loading"><span class="spinner"></span>뉴스 불러오는 중...</div>
+    </div>
+  </div>
+
+  <div id="earningsPane" style="display:none;">
+    <div class="section-label">📊 실적 발표 일정</div>
+    <div class="earn-section" id="earningsList"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>종목 추가</h3>
+    <p>추가할 종목을 선택하세요</p>
+    <div class="stock-options" id="stockOptions"></div>
+    <button class="close-btn" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<script>
+const today = new Date();
+const days = ['일','월','화','수','목','금','토'];
+document.getElementById('dateStr').textContent =
+  `${today.getMonth()+1}월 ${today.getDate()}일 (${days[today.getDay()]})`;
+
+const ALL_STOCKS = [
+  {ticker:'005930', name:'삼성전자', market:'kr', query:'삼성전자 주식'},
+  {ticker:'035720', name:'카카오',   market:'kr', query:'카카오 주식'},
+  {ticker:'000660', name:'SK하이닉스', market:'kr', query:'SK하이닉스 주식'},
+  {ticker:'035420', name:'NAVER',    market:'kr', query:'네이버 주식'},
+  {ticker:'005380', name:'현대차',   market:'kr', query:'현대차 주식'},
+  {ticker:'068270', name:'셀트리온', market:'kr', query:'셀트리온 주식'},
+  {ticker:'AAPL',   name:'Apple',    market:'us', query:'Apple AAPL stock'},
+  {ticker:'TSLA',   name:'Tesla',    market:'us', query:'Tesla TSLA stock'},
+  {ticker:'NVDA',   name:'NVIDIA',   market:'us', query:'NVIDIA NVDA stock'},
+  {ticker:'MSFT',   name:'Microsoft',market:'us', query:'Microsoft MSFT stock'},
+  {ticker:'AMZN',   name:'Amazon',   market:'us', query:'Amazon AMZN stock'},
+  {ticker:'META',   name:'Meta',     market:'us', query:'Meta META stock'},
+  {ticker:'GOOGL',  name:'Alphabet', market:'us', query:'Alphabet GOOGL stock'},
+];
+
+const EARNINGS_DATA = [
+  {name:'Tesla',      ticker:'TSLA',   market:'us', date:'2025-04-23', status:'past', expected:'$0.43', actual:'$0.27', beat:false, note:'예상 하회 — 마진 압박'},
+  {name:'Microsoft',  ticker:'MSFT',   market:'us', date:'2025-04-30', status:'past', expected:'$3.22', actual:'$3.46', beat:true,  note:'클라우드 호조'},
+  {name:'Meta',       ticker:'META',   market:'us', date:'2025-04-30', status:'past', expected:'$5.26', actual:'$6.43', beat:true,  note:'광고 매출 급증'},
+  {name:'Apple',      ticker:'AAPL',   market:'us', date:'2025-05-01', status:'past', expected:'$1.61', actual:'$1.65', beat:true,  note:'아이폰 판매 선방'},
+  {name:'Amazon',     ticker:'AMZN',   market:'us', date:'2025-05-01', status:'past', expected:'$1.37', actual:'$1.59', beat:true,  note:'AWS 성장률 호조'},
+  {name:'삼성전자',   ticker:'005930', market:'kr', date:'2025-05-08', status:'soon', expected:'1,240원', actual:null, beat:null, note:'HBM 실적 반영 여부'},
+  {name:'카카오',     ticker:'035720', market:'kr', date:'2025-05-09', status:'soon', expected:'312원',   actual:null, beat:null, note:'광고·콘텐츠 부문'},
+  {name:'NVIDIA',     ticker:'NVDA',   market:'us', date:'2025-05-28', status:'soon', expected:'$0.89',  actual:null, beat:null, note:'블랙웰 출하량 주목'},
+  {name:'SK하이닉스', ticker:'000660', market:'kr', date:'2025-07-25', status:'soon', expected:'미정',   actual:null, beat:null, note:'HBM3E 매출'},
+];
+
+// ── 처음 보여줄 종목 (원하는 대로 수정하세요)
+let myStocks = [ALL_STOCKS[0], ALL_STOCKS[1], ALL_STOCKS[6], ALL_STOCKS[7]];
+let activeTab = 'news';
+let allNews = [];
+
+const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+function googleRSS(q, lang='ko', gl='KR', ceid='KR:ko') {
+  const feed = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=${lang}&gl=${gl}&ceid=${ceid}`;
+  return PROXY + encodeURIComponent(feed);
+}
+
+function timeAgo(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '';
+  const diff = Math.floor((Date.now() - d) / 60000);
+  if (diff < 1)    return '방금';
+  if (diff < 60)   return `${diff}분 전`;
+  if (diff < 1440) return `${Math.floor(diff / 60)}시간 전`;
+  return `${Math.floor(diff / 1440)}일 전`;
+}
+
+async function fetchNewsForStock(s) {
+  try {
+    const url = s.market === 'kr'
+      ? googleRSS(s.query)
+      : googleRSS(s.query, 'en-US', 'US', 'US:en');
+    const res  = await fetch(url);
+    const data = await res.json();
+    if (!data.items) return [];
+    return data.items.slice(0, 5).map(item => ({
+      title:   item.title.replace(/<[^>]+>/g, ''),
+      link:    item.link,
+      pubDate: item.pubDate,
+      source:  item.author || 'Google News',
+      stock:   s.name,
+      market:  s.market,
+    }));
+  } catch (e) { return []; }
+}
+
+async function loadAllNews() {
+  document.getElementById('newsList').innerHTML =
+    '<div class="loading"><span class="spinner"></span>뉴스 불러오는 중...</div>';
+  const results = await Promise.all(myStocks.map(fetchNewsForStock));
+  allNews = results.flat().sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+  renderNews(activeTab === 'earnings' ? 'all' : activeTab);
+}
+
+function renderNews(filter) {
+  const list = document.getElementById('newsList');
+  let data = allNews;
+  if (filter === 'kr') data = data.filter(n => n.market === 'kr');
+  if (filter === 'us') data = data.filter(n => n.market === 'us');
+  if (!data.length) { list.innerHTML = '<div class="empty">뉴스를 찾을 수 없어요 😢</div>'; return; }
+  list.innerHTML = data.map(n => `
+    <a class="news-item" href="${n.link}" target="_blank" rel="noopener">
+      <span class="news-badge ${n.market === 'kr' ? 'badge-kr' : 'badge-us'}">${n.stock}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="news-title">${n.title}</div>
+        <div class="news-meta">${timeAgo(n.pubDate)} · ${n.source}</div>
+      </div>
+    </a>`).join('');
+}
+
+function renderEarnings() {
+  const el = document.getElementById('earningsList');
+  const myTickers = myStocks.map(s => s.ticker);
+  const relevant  = EARNINGS_DATA.filter(e => myTickers.includes(e.ticker));
+  const now = new Date();
+
+  function fmtDate(ds) {
+    const d = new Date(ds);
+    const diff = Math.round((d - now) / 86400000);
+    if (diff === 0)  return '오늘';
+    if (diff === 1)  return '내일';
+    if (diff === -1) return '어제';
+    return `${d.getMonth()+1}월 ${d.getDate()}일`;
+  }
+  function dLabel(ds) {
+    const diff = Math.round((new Date(ds) - now) / 86400000);
+    if (diff < 0) return '';
+    if (diff === 0) return '오늘!';
+    return `D-${diff}`;
+  }
+
+  const upcoming = relevant.filter(e => e.status === 'soon');
+  const past     = relevant.filter(e => e.status === 'past');
+  let html = '';
+
+  if (upcoming.length) {
+    html += `<div class="earn-month">📅 예정된 실적 발표</div>`;
+    html += upcoming.map(e => {
+      const dl = dLabel(e.date);
+      const isToday = dl === '오늘!';
+      return `<div class="earn-card">
+        <div class="earn-logo ${e.market === 'kr' ? 'logo-kr' : 'logo-us'}">${e.ticker.slice(0,2)}</div>
+        <div class="earn-info">
+          <div class="earn-name">${e.name} <span class="d-badge">${dl}</span></div>
+          <div class="earn-date">${fmtDate(e.date)} · ${e.note}</div>
+        </div>
+        <div class="earn-right">
+          <span class="earn-tag ${isToday ? 'tag-today' : 'tag-soon'}">${isToday ? '오늘 발표' : '예정'}</span>
+          <div class="earn-eps">예상 EPS ${e.expected}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (past.length) {
+    html += `<div class="earn-month" style="margin-top:14px;">✅ 최근 실적 결과</div>`;
+    html += past.map(e => `
+      <div class="earn-card past">
+        <div class="earn-logo ${e.market === 'kr' ? 'logo-kr' : 'logo-us'}">${e.ticker.slice(0,2)}</div>
+        <div class="earn-info">
+          <div class="earn-name">${e.name}</div>
+          <div class="earn-date">${fmtDate(e.date)} · ${e.note}</div>
+        </div>
+        <div class="earn-right">
+          <span class="earn-tag ${e.beat ? 'tag-beat' : 'tag-miss'}">${e.beat ? '예상 상회' : '예상 하회'}</span>
+          <div class="earn-eps">실제 EPS ${e.actual}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  if (!html) html = '<div class="empty">관심 종목의 실적 발표 일정이 없어요</div>';
+  el.innerHTML = html;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  ['news','kr','us','earnings'].forEach(t => {
+    document.getElementById('tab-' + t)?.classList.remove('on');
+  });
+  document.getElementById('tab-' + tab)?.classList.add('on');
+  const isNews = tab !== 'earnings';
+  document.getElementById('newsPane').style.display    = isNews ? 'block' : 'none';
+  document.getElementById('earningsPane').style.display = isNews ? 'none' : 'block';
+  if (isNews) renderNews(tab === 'news' ? 'all' : tab);
+  else renderEarnings();
+}
+
+function renderWatchlist() {
+  const el = document.getElementById('watchlist');
+  el.innerHTML = '';
+  myStocks.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'stock-card';
+    d.innerHTML = `
+      <div class="stock-ticker">${s.ticker}</div>
+      <div class="stock-name">${s.name}</div>
+      <div class="stock-flag">${s.market === 'kr' ? '🇰🇷 한국' : '🇺🇸 미국'}</div>`;
+    el.appendChild(d);
+  });
+  const btn = document.createElement('button');
+  btn.className = 'add-card';
+  btn.textContent = '+ 추가';
+  btn.onclick = openModal;
+  el.appendChild(btn);
+}
+
+function openModal() {
+  const avail = ALL_STOCKS.filter(s => !myStocks.find(m => m.ticker === s.ticker));
+  document.getElementById('stockOptions').innerHTML = avail.map(s => `
+    <button class="stock-option" onclick="addStock('${s.ticker}')">
+      <span>${s.name} <span style="font-size:12px;color:#888;">${s.ticker}</span></span>
+      <span>${s.market === 'kr' ? '🇰🇷' : '🇺🇸'}</span>
+    </button>`).join('');
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function addStock(ticker) {
+  const s = ALL_STOCKS.find(x => x.ticker === ticker);
+  if (s) { myStocks.push(s); closeModal(); renderWatchlist(); loadAllNews(); }
+}
+document.getElementById('modalBg').onclick = e => {
+  if (e.target === e.currentTarget) closeModal();
+};
+
+renderWatchlist();
+loadAllNews();
+</script>
+</body>
+</html>
